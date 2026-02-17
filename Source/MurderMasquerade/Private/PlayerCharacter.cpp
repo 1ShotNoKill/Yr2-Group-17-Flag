@@ -37,7 +37,7 @@ void APlayerCharacter::BeginPlay()
 	if (ItemComponent)
 	{
 		USceneComponent* AttachPoint = ItemComponent->AttachPoint;
-		AttachPoint->SetupAttachment(GetMesh());
+		AttachPoint->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform);
 	}
 }
 
