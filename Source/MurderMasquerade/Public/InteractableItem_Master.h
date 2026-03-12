@@ -26,6 +26,7 @@ public:
 
 	//Custom Variables
 public:
+	float UseRange = 250;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

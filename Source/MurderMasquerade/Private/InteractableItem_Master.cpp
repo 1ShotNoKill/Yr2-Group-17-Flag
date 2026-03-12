@@ -3,6 +3,8 @@
 
 #include "InteractableItem_Master.h"
 #include "ItemInterationComponent.h"
+#include <Kismet/KismetSystemLibrary.h>
+#include <Master_Ai.h>
 
 // Sets default values
 AInteractableItem_Master::AInteractableItem_Master()
@@ -54,5 +56,24 @@ void AInteractableItem_Master::DropItem_Implementation(APlayerCharacter* Interac
 void AInteractableItem_Master::UseItem_Implementation(APlayerCharacter* Interactor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UsedItem"));
+
+	FVector Start = GetActorLocation();
+	FVector End = Start + (GetActorForwardVector() * UseRange);
+	FName Profile = "Interactable";
+
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(this);
+	IgnoreActors.Add(Interactor);
+
+	FHitResult HitActor;
+	UKismetSystemLibrary::LineTraceSingleByProfile(this, Start, End, Profile, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitActor, true);
+
+
+
+	if (AMaster_Ai* HitPawn = Cast<AMaster_Ai>(HitActor.GetActor()))
+	{
+		HitPawn->SetDeadState();
+	}
+
 }
 

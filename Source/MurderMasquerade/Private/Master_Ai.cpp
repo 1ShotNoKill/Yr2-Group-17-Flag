@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Navigation/PathFollowingComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "AIPositionMarker_Master.h"
 
 #include "AIMarker_Actor.h"
@@ -122,4 +123,24 @@ void AMaster_Ai::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AMaster_Ai::SetDeadState()
+{
+	if (bIsDead == true) return;
+	bIsDead = true;
+
+	USkeletalMeshComponent* CharMesh = GetMesh();
+
+	FRotator Rotation = CharMesh->GetRelativeRotation();
+	Rotation = FRotator(Rotation.Roll, Rotation.Yaw, Rotation.Pitch - 90.f);
+	CharMesh->SetRelativeRotation(Rotation);
+
+	GetCharacterMovement()->DisableMovement();
+	AIController->StopMovement();
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
+	if(bIsTarget == true) OnDeath.Broadcast();
+	UE_LOG(LogTemp, Warning, TEXT("NPC Died"));
 }

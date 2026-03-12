@@ -4,52 +4,78 @@
 #include <Kismet/GameplayStatics.h>
 #include <Ai_Guest.h>
 
+
 UWS_AISpawner::UWS_AISpawner()
 {
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 }
 
-void UWS_AISpawner::FindAllMarkerActors()
+AAIMarker_Actor* UWS_AISpawner::GetRandomMarker()
 {
-	TArray<AActor*> MasterActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAIPositionMarker_Master::StaticClass(), MasterActors);
-
-	float num = MasterActors.Num();
-	UE_LOG(LogTemp, Warning, TEXT("Found %f master actors"), num);
-
-	for (auto MasterActor : MasterActors) //Iterates through every AIPositionMarker_Master
+	if (AllMarkers.Num() > 0)
 	{
-		AAIPositionMarker_Master* Master = Cast<AAIPositionMarker_Master>(MasterActor);
-
-		TArray<AActor*> Markers = Master->GetAllMarkerActors();
-		for (auto Marker : Markers)
-		{
-			MarkerActors.Add(Marker);
-		}
+		float RN = FMath::RandRange(0, AllMarkers.Num() - 1);
+		AActor* CurrentMarker = AllMarkers[RN];
+		AAIMarker_Actor* SelectedMarker = Cast<AAIMarker_Actor>(CurrentMarker);
+		if (SelectedMarker && SelectedMarker->bIsAvaliable == true) return SelectedMarker;
 	}
+	return nullptr;
 }
 
-void UWS_AISpawner::SpawnGuests(int MaxGuests)
+void UWS_AISpawner::FindAllMarkerActors()
 {
-	for (int i = 0; i <= MaxGuests - 1; i++)
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAIMarker_Actor::StaticClass(), AllMarkers);
+	int Num = AllMarkers.Num();
+}
+
+void UWS_AISpawner::SpawnGuests()
+{
+	FindAllMarkerActors();
+
+	if (AllMarkers.Num() <= 0) return;
+	
+	TArray<AActor*> LocalAllMarkers = AllMarkers;
+	for (int i = 0; i < MaxGuests -1; i++)
 	{
-		AActor* Marker = MarkerActors[i];
-		//AAIMarker_Actor* Marker; //get random marker to use as spawn location for guest npc
+		int RandomIndex = FMath::RandRange(0, LocalAllMarkers.Num()-1);
+		AActor* Marker;
+		if (LocalAllMarkers[RandomIndex])
+		{
+			Marker = LocalAllMarkers[RandomIndex];
+		}
+		else Marker = LocalAllMarkers[0];
+
+
+		//get random marker to use as spawn location for guest npc
 		AAi_Guest* Guest = GetWorld()->SpawnActor<AAi_Guest>(AAi_Guest::StaticClass(), Marker->GetActorLocation(), Marker->GetActorRotation(), SpawnParams); //Spawns guest at random marker
-		
+
 		EMask RandomMask = GetRandomMask(); //Get Random Mask Key
+
 
 		FString Path = MaskMap[RandomMask]; //Get Value at key
 		UStaticMesh* GuestMask = LoadObject<UStaticMesh>(nullptr, *Path); //Load object using path from randommask()
-			if(GuestMask) Guest->SetMask(GuestMask); //if valid sets mask for guest
-		
+		if (GuestMask) Guest->SetMask(GuestMask); //if valid sets mask for guest
+
 		if (const UEnum* Enum = StaticEnum<EMask>()) //Get display name from enum key
 		{
 			FText MaskName = Enum->GetDisplayNameTextByValue(static_cast<uint8>(RandomMask));
 			FName TagName = (*MaskName.ToString()); //Convert FText to FName
 			Guest->Tags.Add(TagName); //Adds mask name to guest npc
 		}		
-		if (RandomMask == TargetMask) Guest->Tags.Add("Target"); //If guest wears target mark then mark then as the target.
+		if (RandomMask == TargetMask)
+		{
+			Guest->Tags.Add("Target"); //If guest wears target mark then mark then as the target.
+			Guest->bIsTarget = true;
+			Target = Guest;
+
+			AMurderGameMode* GM = Cast<AMurderGameMode>(GetWorld()->GetAuthGameMode());
+			if(GM) Guest->OnDeath.AddDynamic(GM, &AMurderGameMode::OnTargetDeath);
+			UE_LOG(LogTemp, Warning, TEXT("Bound to Target"));
+		}
+		Guest->CurrentMaskType = RandomMask;
+		
+
+		LocalAllMarkers.RemoveAt(RandomIndex);
 	}
 }
 
@@ -74,16 +100,9 @@ EMask UWS_AISpawner::GetRandomMask()
 	return EMask::None;
 }
 
-AAIMarker_Actor* UWS_AISpawner::GetRandomMarker()
+AActor* UWS_AISpawner::GetTarget()
 {
-	if (MarkerActors.Num() > 0)
-	{
-		float RN = FMath::RandRange(0, MarkerActors.Num() - 1);
-		AActor* CurrentMarker = MarkerActors[RN];
-		AAIMarker_Actor* SelectedMarker = Cast<AAIMarker_Actor>(CurrentMarker);
-		if (SelectedMarker && SelectedMarker->bIsAvaliable == true) return SelectedMarker;
-	}
-	return nullptr;
+	return Target;
 }
 
 void UWS_AISpawner::OnWorldBeginPlay(UWorld& World)
@@ -92,11 +111,8 @@ void UWS_AISpawner::OnWorldBeginPlay(UWorld& World)
 	MaskMap.Add(EMask::Bear, "/Game/Masks/BearMask.BearMask");
 	MaskMap.Add(EMask::Rabbit, "/Game/Masks/RabbitMask.RabbitMask");
 
-	FindAllMarkerActors();
-	UE_LOG(LogTemp, Warning, TEXT("%lld, Markers active"), MarkerActors.Num());
 
-	SpawnGuests(8);
-
-
+	FTimerHandle SpawnTimer;
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimer,this, &UWS_AISpawner::SpawnGuests, 1.f, false);
 
 }

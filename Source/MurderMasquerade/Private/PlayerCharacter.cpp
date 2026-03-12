@@ -29,6 +29,7 @@ APlayerCharacter::APlayerCharacter()
 	CreateCamera();
 }
 
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -45,7 +46,7 @@ void APlayerCharacter::CreateCamera()
 {
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 0.f;
+	SpringArm->TargetArmLength = 2.f;
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bDoCollisionTest = true;
 	FVector Location = SpringArm->GetRelativeLocation();
@@ -74,7 +75,8 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-
+	FVector2D Vector = Value.Get<FVector2D>();
+	
 }
 
 void APlayerCharacter::Interact() 
@@ -89,7 +91,7 @@ void APlayerCharacter::DropItem()
 
 void APlayerCharacter::PrimaryFire()
 {
-	PrimaryFireDelegate.Broadcast();
+	if(ItemComponent) PrimaryFireDelegate.Broadcast();
 }
 
 

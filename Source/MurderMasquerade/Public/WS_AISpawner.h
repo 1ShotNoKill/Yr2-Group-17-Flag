@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "AIPositionMarker_Master.h"
+#include "MurderGameMode.h"
 #include "WS_AISpawner.generated.h"
 
 class AAIPositionMarker_Master;
@@ -28,16 +29,20 @@ class MURDERMASQUERADE_API UWS_AISpawner : public UWorldSubsystem
 public:
 	AAIMarker_Actor* GetRandomMarker();
 	UPROPERTY(VisibleAnywhere)
-	TArray<AActor*> MarkerActors;
-
+	TArray<AActor*> AllMarkers;
+	AActor* GetTarget();
+	int MaxGuests = 3;
+protected:
+	EMask TargetMask;
+	AActor* Target;
 private:
 	virtual void OnWorldBeginPlay(UWorld& World) override;
 	void FindAllMarkerActors();
-	void SpawnGuests(int MaxGuests);
+	void SpawnGuests();
 	EMask GetRandomMask();
 
 
 	TMap<EMask, FString> MaskMap;
-	EMask TargetMask = EMask::None;
+	
 	FActorSpawnParameters SpawnParams;
 };

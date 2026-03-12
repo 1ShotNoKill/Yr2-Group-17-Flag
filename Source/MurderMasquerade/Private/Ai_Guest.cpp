@@ -5,8 +5,6 @@
 
 AAi_Guest::AAi_Guest()
 {
-
-
 	CreateMaskComponent();
 }
 

@@ -10,6 +10,8 @@
 
 #include "Master_Ai.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
 class AAIMarker_Actor;
 
 UCLASS()
@@ -28,6 +30,11 @@ public:
 //Variables
 public:
 	UWS_AISpawner* Spawner;
+	bool bIsDead = false;
+	bool bIsTarget;
+	UPROPERTY(BlueprintAssignable)
+	FOnDeath OnDeath;
+
 protected:
 	AAIMarker_Actor* CurrentMarker;
 
@@ -38,6 +45,7 @@ private:
 
 //Functions
 public:
+	void SetDeadState();
 protected:
 	void MoveToRandomLocation(float Range);
 	void MoveToRandomMarker();

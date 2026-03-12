@@ -17,7 +17,7 @@ class MURDERMASQUERADE_API AAi_Guest : public AMaster_Ai
 
 public:
 	void SetMask(UStaticMesh* Mesh);
-
+	EMask CurrentMaskType;
 
 private:
 	UPROPERTY(EditAnywhere)

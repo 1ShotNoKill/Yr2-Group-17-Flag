@@ -113,6 +113,7 @@ void UItemInterationComponent::UseHeldItem()
 		if (HeldActor->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass()))
 		{
 			IItemInteractionInterface::Execute_UseItem(HeldActor, Owner);
+
 		}
 	}
 }

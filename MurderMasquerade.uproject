@@ -9,18 +9,14 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine",
-				"AIModule"
+				"Engine"
 			]
 		}
 	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
-		}
+			"Enabled": true
+		},
 	]
 }
