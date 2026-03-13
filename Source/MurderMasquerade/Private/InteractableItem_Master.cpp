@@ -15,13 +15,25 @@ AInteractableItem_Master::AInteractableItem_Master()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
+	Mesh->SetRelativeRotation(FRotator(0, -180, 0));
+	Mesh->SetSimulatePhysics(false);
 }
 
 // Called when the game starts or when spawned
 void AInteractableItem_Master::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Mesh->SetSimulatePhysics(true);
+}
+
+void AInteractableItem_Master::OnConstruction(const FTransform& Transform)
+{
+	if (!DefaultMeshPath.IsEmpty())
+	{
+		Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, *DefaultMeshPath));
+	}
 }
 
 // Called every frame
@@ -57,8 +69,9 @@ void AInteractableItem_Master::UseItem_Implementation(APlayerCharacter* Interact
 {
 	UE_LOG(LogTemp, Warning, TEXT("UsedItem"));
 
-	FVector Start = GetActorLocation();
-	FVector End = Start + (GetActorForwardVector() * UseRange);
+	
+	FVector Start = Interactor->GetCameraLocation();
+	FVector End = Start + (Interactor->GetCameraForwardVector() * UseRange);
 	FName Profile = "Interactable";
 
 	TArray<AActor*> IgnoreActors;
@@ -68,12 +81,9 @@ void AInteractableItem_Master::UseItem_Implementation(APlayerCharacter* Interact
 	FHitResult HitActor;
 	UKismetSystemLibrary::LineTraceSingleByProfile(this, Start, End, Profile, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitActor, true);
 
-
-
 	if (AMaster_Ai* HitPawn = Cast<AMaster_Ai>(HitActor.GetActor()))
 	{
 		HitPawn->SetDeadState();
 	}
-
 }
 

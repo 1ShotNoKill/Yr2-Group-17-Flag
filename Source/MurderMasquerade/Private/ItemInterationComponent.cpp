@@ -30,6 +30,9 @@ void UItemInterationComponent::BeginPlay()
 	AttachPoint = NewObject<USceneComponent>(Owner, USceneComponent::StaticClass(), TEXT("ItemAttachPoint"));
 	AttachPoint->RegisterComponent();
 	AttachPoint->AttachToComponent(Owner->GetRootComponent(),FAttachmentTransformRules::SnapToTargetIncludingScale);
+	AttachPoint->SetRelativeRotation(FRotator(0, -90, 0));
+	AttachPoint->SetRelativeLocation(FVector(0, 30, 40));
+
 
 	if (Owner)
 	{

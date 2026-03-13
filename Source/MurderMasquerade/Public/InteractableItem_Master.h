@@ -19,6 +19,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -33,6 +34,7 @@ protected:
 	USceneComponent* Root;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Mesh;
+	FString DefaultMeshPath;
 private:
 
 
@@ -42,6 +44,7 @@ protected:
 	void PickUpItem_Implementation(APlayerCharacter* Interactor);
 	virtual void DropItem_Implementation(APlayerCharacter* Interactor);
 	virtual void UseItem_Implementation(APlayerCharacter* Interactor);
+	
 private:
 
 

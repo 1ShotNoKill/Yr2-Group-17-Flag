@@ -67,7 +67,8 @@ private:
 
 //Custom Functions
 public:
-
+	FVector GetCameraLocation();
+	FVector GetCameraForwardVector();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -75,6 +76,8 @@ private:
 	void CreateCamera();
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
+
+	
 	
 	void Interact();
 	void DropItem();

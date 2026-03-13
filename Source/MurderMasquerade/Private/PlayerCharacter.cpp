@@ -76,7 +76,19 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D Vector = Value.Get<FVector2D>();
-	
+
+	AddMovementInput(GetActorForwardVector(), Vector.X);
+	AddMovementInput(GetActorRightVector(), Vector.Y);
+}
+
+FVector APlayerCharacter::GetCameraLocation()
+{
+	return FVector(PlayerCamera->GetComponentLocation());
+}
+
+FVector APlayerCharacter::GetCameraForwardVector()
+{
+	return FVector(PlayerCamera->GetForwardVector());
 }
 
 void APlayerCharacter::Interact() 
@@ -132,6 +144,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (InputActions.Contains("Interact_IA"))	EnhancedInputComponent->BindAction(InputActions["Interact_IA"], ETriggerEvent::Started, this, &APlayerCharacter::Interact);
 		if (InputActions.Contains("DropItem_IA"))	EnhancedInputComponent->BindAction(InputActions["DropItem_IA"], ETriggerEvent::Started, this, &APlayerCharacter::DropItem);
 		if (InputActions.Contains("Fire_IA"))	EnhancedInputComponent->BindAction(InputActions["Fire_IA"], ETriggerEvent::Started, this, &APlayerCharacter::PrimaryFire);
+		if (InputActions.Contains("Move_IA"))	EnhancedInputComponent->BindAction(InputActions["Move_IA"], ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 	}
 
 }

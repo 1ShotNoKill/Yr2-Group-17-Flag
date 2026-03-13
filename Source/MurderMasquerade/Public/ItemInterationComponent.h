@@ -26,7 +26,7 @@ public:
 
 //Custom Variables
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	USceneComponent* AttachPoint;
 	bool bIsHoldingItem;
 protected:

@@ -31,6 +31,8 @@ public:
 	TArray<TSoftClassPtr<class AMasterSpacerSegment>> SpacerPrefabs;
 	UPROPERTY(EditAnywhere, Category = "Prefabs")
 	TArray<TSoftClassPtr<class AMasterRoom>> RoomPrefabs;
+	UPROPERTY(EditAnywhere, Category = "Prefabs")
+	TArray<TSoftClassPtr<class AMasterEndCap>> EndCapPrefabs;
 
 
 protected:
