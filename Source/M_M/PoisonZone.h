@@ -14,12 +14,11 @@ class M_M_API APoisonZone : public AActor
 	GENERATED_BODY()
 
 public:
-
 	APoisonZone();
 
 protected:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Poison", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* PoisonArea;
 
 	UPROPERTY(EditAnywhere, Category = "Poison")
@@ -29,8 +28,6 @@ protected:
 	float TickRate = 1.0f;
 
 	FTimerHandle DamageTimer;
-
-protected:
 
 	virtual void BeginPlay() override;
 

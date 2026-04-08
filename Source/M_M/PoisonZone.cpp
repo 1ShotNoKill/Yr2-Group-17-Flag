@@ -3,15 +3,17 @@
 #include "PoisonZone.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
 APoisonZone::APoisonZone()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	PoisonArea = CreateDefaultSubobject<UBoxComponent>(TEXT("PoisonArea"));
-	RootComponent = PoisonArea;
+	SetRootComponent(PoisonArea);
 
 	PoisonArea->SetCollisionProfileName(TEXT("Trigger"));
+	PoisonArea->SetGenerateOverlapEvents(true);
 }
 
 void APoisonZone::BeginPlay()
@@ -31,16 +33,20 @@ void APoisonZone::OnOverlapBegin(
 	const FHitResult& SweepResult)
 {
 	if (!OtherActor || OtherActor == this)
+	{
 		return;
+	}
 
-	// start damage timer only when something enters
-	GetWorldTimerManager().SetTimer(
-		DamageTimer,
-		this,
-		&APoisonZone::ApplyDamage,
-		TickRate,
-		true
-	);
+	if (!GetWorldTimerManager().IsTimerActive(DamageTimer))
+	{
+		GetWorldTimerManager().SetTimer(
+			DamageTimer,
+			this,
+			&APoisonZone::ApplyDamage,
+			TickRate,
+			true
+		);
+	}
 }
 
 void APoisonZone::OnOverlapEnd(
@@ -49,8 +55,13 @@ void APoisonZone::OnOverlapEnd(
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	// stop timer when leaving
-	GetWorldTimerManager().ClearTimer(DamageTimer);
+	TArray<AActor*> OverlappingActors;
+	PoisonArea->GetOverlappingActors(OverlappingActors);
+
+	if (OverlappingActors.Num() == 0)
+	{
+		GetWorldTimerManager().ClearTimer(DamageTimer);
+	}
 }
 
 void APoisonZone::ApplyDamage()
