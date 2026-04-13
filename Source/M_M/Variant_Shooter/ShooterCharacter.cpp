@@ -1,6 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-
 #include "ShooterCharacter.h"
 #include "ShooterWeapon.h"
 #include "EnhancedInputComponent.h"
@@ -278,6 +277,5 @@ void AShooterCharacter::Die()
 
 void AShooterCharacter::OnRespawn()
 {
-	// destroy the character to force the PC to respawn
 	Destroy();
 }
