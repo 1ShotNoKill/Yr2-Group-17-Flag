@@ -12,6 +12,16 @@ AShooterGameMode::AShooterGameMode()
 void AShooterGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	if (PC)
+	{
+		PC->bShowMouseCursor = false;
+
+		FInputModeGameOnly InputMode;
+		PC->SetInputMode(InputMode);
+	}
 }
 
 void AShooterGameMode::StartEscapeTimer()
