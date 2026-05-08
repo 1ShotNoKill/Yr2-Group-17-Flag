@@ -15,9 +15,9 @@ UENUM(BlueprintType)
 enum class EMask : uint8
 {
 	None UMETA(DisplayName = "None"),
-	Bird UMETA(DisplayName = "Bird"),
-	Bear UMETA(DisplayName = "Bear"),
-	Rabbit UMETA(DisplayName = "Rabbit")
+	Bird UMETA(DisplayName = "Bird Mask"),
+	Bear UMETA(DisplayName = "Bear Mask"),
+	Rabbit UMETA(DisplayName = "Rabbit Mask")
 };
 
 
@@ -31,7 +31,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<AActor*> AllMarkers;
 	AActor* GetTarget();
-	int MaxGuests = 3;
+	int MaxGuests = 10;
 protected:
 	EMask TargetMask;
 	AActor* Target;
@@ -40,6 +40,7 @@ private:
 	void FindAllMarkerActors();
 	void SpawnGuests();
 	EMask GetRandomMask();
+	void UpdateGamemodeMask();
 
 
 	TMap<EMask, FString> MaskMap;

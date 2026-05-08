@@ -24,7 +24,6 @@ void AMurderGameMode::StartPlay()
 		AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Player->GetController());
 		PlayerWidget = PlayerController->PlayerHudReference;
 	}
-
 }
 
 void AMurderGameMode::Wingame()
@@ -81,10 +80,32 @@ void AMurderGameMode::ChangePhase(int NewPhase)
 
 void AMurderGameMode::EndGame() 
 {
-	FString FullMapName = GetWorld()->GetMapName();
-	FString ShortMapName = FPackageName::GetShortName(FullMapName);
+	
+	FString FullMapName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	//FString ShortMapName = FPackageName::GetShortName(FullMapName);
 
-	UGameplayStatics::OpenLevel(GetWorld(), *ShortMapName);
+	UGameplayStatics::OpenLevel(GetWorld(), *FullMapName);
+}
+
+void AMurderGameMode::UpdateMaskDesc(FString Mask)
+{
+	if (PlayerWidget && !Mask.IsEmpty())
+	{
+		if (FProperty* Maskdesc = PlayerWidget->GetClass()->FindPropertyByName("Txt_MaskDescription"))
+		{
+			UFunction* MaskdescFunc = PlayerWidget->FindFunction(TEXT("SetMaskText"));
+			if (MaskdescFunc)
+			{
+				struct FUpdateMaskdesc
+				{
+					FText Text;
+				};
+				FUpdateMaskdesc UpdateParams;
+				UpdateParams.Text = FText::FromString(Mask);
+				PlayerWidget->ProcessEvent(MaskdescFunc, &UpdateParams);
+			}
+		}
+	}
 }
 
 void AMurderGameMode::UpdateTimer()

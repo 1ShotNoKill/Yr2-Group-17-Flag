@@ -29,6 +29,7 @@ public:
 	void ChangePhase(int NewPhase);
 	void UpdateTimer();
 	void EndGame();
+	void UpdateMaskDesc(FString Mask);
 	FTimerHandle Phase2Timer;
 	UFUNCTION()
 	void OnTargetDeath();

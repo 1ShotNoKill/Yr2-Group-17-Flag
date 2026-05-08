@@ -89,6 +89,7 @@ EMask UWS_AISpawner::GetRandomMask()
 	{
 		EMask TargetType = Keys[FMath::RandRange(0, Keys.Num() - 1)];
 		TargetMask = TargetType;
+		UpdateGamemodeMask();
 		return TargetType;
 	}
 	else
@@ -98,6 +99,16 @@ EMask UWS_AISpawner::GetRandomMask()
 		return Type;
 	}
 	return EMask::None;
+}
+
+void UWS_AISpawner::UpdateGamemodeMask()
+{
+		AMurderGameMode* Gamemode = Cast<AMurderGameMode>(GetWorld()->GetAuthGameMode());
+		if (Gamemode)
+		{
+			FString MaskName = StaticEnum<EMask>()->GetDisplayNameTextByValue((int64)TargetMask).ToString();
+			if(!MaskName.IsEmpty()) Gamemode->UpdateMaskDesc(MaskName);
+		}
 }
 
 AActor* UWS_AISpawner::GetTarget()

@@ -7,6 +7,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include <Kismet/GameplayStatics.h>
+#include <MainPlayerController.h>
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -106,6 +108,38 @@ void APlayerCharacter::PrimaryFire()
 	if(ItemComponent) PrimaryFireDelegate.Broadcast();
 }
 
+void APlayerCharacter::PauseGame()
+{
+	UWorld* World = GetWorld();
+
+	if (UGameplayStatics::IsGamePaused(World))
+	{
+		UGameplayStatics::SetGamePaused(World, false);
+	}	
+	else UGameplayStatics::SetGamePaused(World, true);
+
+	if (AMainPlayerController* PC = Cast<AMainPlayerController>(GetController()))
+	{
+		if (PC->PlayerHudReference)
+		{
+			if (FProperty* PauseWidget = PC->PlayerHudReference->GetClass()->FindPropertyByName("PauseMenu"))
+			{
+				UFunction* PauseFunc = PC->PlayerHudReference->FindFunction(TEXT("ShowPauseMenu"));
+				if (PauseFunc)
+				{
+					struct FPauseVis
+					{
+						bool Visibility;
+					};
+					FPauseVis PauseVis;
+					PauseVis.Visibility = UGameplayStatics::IsGamePaused(World);
+					PC->PlayerHudReference->ProcessEvent(PauseFunc, &PauseVis);
+				}
+			}
+		}
+	}
+}
+
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
@@ -145,6 +179,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (InputActions.Contains("DropItem_IA"))	EnhancedInputComponent->BindAction(InputActions["DropItem_IA"], ETriggerEvent::Started, this, &APlayerCharacter::DropItem);
 		if (InputActions.Contains("Fire_IA"))	EnhancedInputComponent->BindAction(InputActions["Fire_IA"], ETriggerEvent::Started, this, &APlayerCharacter::PrimaryFire);
 		if (InputActions.Contains("Move_IA"))	EnhancedInputComponent->BindAction(InputActions["Move_IA"], ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		if (InputActions.Contains("Pause_IA")) EnhancedInputComponent->BindAction(InputActions["Pause_IA"], ETriggerEvent::Started, this, &APlayerCharacter::PauseGame);
 	}
 
 }

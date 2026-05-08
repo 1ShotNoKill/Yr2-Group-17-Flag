@@ -82,4 +82,5 @@ private:
 	void Interact();
 	void DropItem();
 	void PrimaryFire();
+	void PauseGame();
 };

@@ -1,0 +1,4 @@
+[/Script/Engine.GameUserSettings]
+ResolutionSizeX= 860
+ResolutionSizeY= 1000
+FullscreenMode=2
