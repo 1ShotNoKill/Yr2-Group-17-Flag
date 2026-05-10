@@ -4,7 +4,7 @@
 #include "PlayerCharacter.h"
 #include <Kismet/KismetSystemLibrary.h>
 
-
+#include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include <Kismet/GameplayStatics.h>
@@ -26,9 +26,22 @@ APlayerCharacter::APlayerCharacter()
 	}
 	//ItemComponentCreation
 	ItemComponent = CreateDefaultSubobject<UItemInterationComponent>(TEXT("ItemInteractionComponent"));
-	ItemComponent->RegisterComponent();
 
-	CreateCamera();
+
+
+	//SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
+	//SpringArm->SetupAttachment(GetRootComponent());
+	//SpringArm->TargetArmLength = 2.f;
+	//SpringArm->bUsePawnControlRotation = true;
+	//SpringArm->bDoCollisionTest = true;
+	//FVector Location = SpringArm->GetRelativeLocation();
+	//Location = FVector(Location.X, Location.Y, 92.f);
+	//SpringArm->SetRelativeLocation(Location);
+
+
+	//PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+	//PlayerCamera->SetupAttachment(SpringArm);
+	//PlayerCamera->bUsePawnControlRotation = false;
 }
 
 
@@ -42,12 +55,10 @@ void APlayerCharacter::BeginPlay()
 		USceneComponent* AttachPoint = ItemComponent->AttachPoint;
 		AttachPoint->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform);
 	}
-}
-
-void APlayerCharacter::CreateCamera()
-{
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	SpringArm->SetupAttachment(RootComponent);
+	
+	SpringArm = NewObject<USpringArmComponent>(this,TEXT("Cameraarm"));
+	SpringArm->RegisterComponent();
+	SpringArm->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	SpringArm->TargetArmLength = 2.f;
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bDoCollisionTest = true;
@@ -56,11 +67,10 @@ void APlayerCharacter::CreateCamera()
 	SpringArm->SetRelativeLocation(Location);
 
 
-	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
-	PlayerCamera->SetupAttachment(SpringArm);
+	PlayerCamera = NewObject<UCameraComponent>(this,TEXT("PlayerCamera"));
+	PlayerCamera->RegisterComponent();
+	PlayerCamera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
 	PlayerCamera->bUsePawnControlRotation = false;
-
-
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)

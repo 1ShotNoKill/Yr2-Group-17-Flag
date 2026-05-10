@@ -37,6 +37,7 @@ void UWS_AISpawner::SpawnGuests()
 	TArray<AActor*> LocalAllMarkers = AllMarkers;
 	for (int i = 0; i < MaxGuests -1; i++)
 	{
+		if (LocalAllMarkers.Num() == 0) break;
 		int RandomIndex = FMath::RandRange(0, LocalAllMarkers.Num()-1);
 		AActor* Marker;
 		if (LocalAllMarkers[RandomIndex])
