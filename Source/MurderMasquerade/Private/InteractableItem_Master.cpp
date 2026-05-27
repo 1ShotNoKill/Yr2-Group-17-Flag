@@ -11,18 +11,21 @@ AInteractableItem_Master::AInteractableItem_Master()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	Mesh->SetRelativeRotation(FRotator(0, -180, 0));
 	Mesh->SetSimulatePhysics(false);
+	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
 }
 
 // Called when the game starts or when spawned
 void AInteractableItem_Master::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+
 
 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Mesh->SetSimulatePhysics(true);

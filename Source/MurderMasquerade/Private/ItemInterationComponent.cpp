@@ -6,7 +6,7 @@
 #include <Kismet/KismetSystemLibrary.h>
 #include <GameFramework/Character.h>
 #include "ItemInteractionInterface.h"
-#include <Camera/CameraComponent.h>
+#include <InteractableItem_Master.h>
 
 
 // Sets default values for this component's properties
@@ -72,17 +72,26 @@ FHitResult UItemInterationComponent::LineTraceViaPlayer(FName Profile,float Rang
 }
 
 void UItemInterationComponent::PickupInteractable()
-{
+{    
+
 
 	if (!HeldActor)
 	{
 		FHitResult HitResult = LineTraceViaPlayer(FName("Interactable"), PickupRange);
 		AActor* HitActor = HitResult.GetActor();
+
+		
+		
 		UE_LOG(LogTemp, Warning, TEXT("Received Broadcast Interact"));
 		//checks if hitactor is valid and implements interaction interface
 		if (HitActor && HitActor->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass()))
 		{
 			IItemInteractionInterface::Execute_PickUpItem(HitActor, Owner);
+
+			if (AInteractableItem_Master* HitInteractable = Cast<AInteractableItem_Master>(HitActor))
+			{
+				if (HitInteractable->BCanPickup == false) return;
+			}
 			HeldActor = HitActor;
 			if (IsValid(HeldActor)) bIsHoldingItem = true;
 			

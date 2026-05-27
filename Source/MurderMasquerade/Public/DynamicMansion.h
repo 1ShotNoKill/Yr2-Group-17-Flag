@@ -40,6 +40,8 @@ protected:
 	float HallwayOffset = 300;
 	UPROPERTY(EditAnywhere, Category = "Hallway")
 	float SpacerOffset = 300;
+	UPROPERTY(EditAnywhere, Category = "Hallway")
+	float InitialOffset = 536.148;
 private:
 	//Spawned Segments/Rooms
 	UPROPERTY()	

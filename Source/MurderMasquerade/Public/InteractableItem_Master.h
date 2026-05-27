@@ -28,7 +28,7 @@ public:
 	//Custom Variables
 public:
 	float UseRange = 250;
-
+	bool BCanPickup = true;
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
