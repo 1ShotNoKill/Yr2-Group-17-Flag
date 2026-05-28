@@ -18,7 +18,6 @@ public:
 	AInteractableDoor();
 	virtual void BeginPlay() override;
 	void PickUpItem_Implementation(APlayerCharacter* Interactor) override;
-	void ToggleDoor();
 	void OpenDoor();
 	virtual void Tick(float DeltaTime) override;
 	
@@ -28,10 +27,13 @@ private:
 	USceneComponent* Center;
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* RightDoor;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* LeftDoor;
+	UPROPERTY(EditAnywhere)
 	bool BDoorOpen = false;
-	float DoorSpeed = 2;
-	float TargetDegree = -100;
-	float StartDegree;
+	float DoorSpeed = 1;
+	float TargetDegree = 100;
+	FRotator StartDegree;
 	FTimerHandle OpenHandle;
 
 
