@@ -2,6 +2,7 @@
 
 #include "PlayerCharacter.h"
 #include "ItemInteractionInterface.h"
+#include "InteractableItem_Master.h"
 
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -49,11 +50,11 @@ void UItemInterationComponent::BeginPlay()
 		);
 
 		AttachPoint->SetRelativeRotation(
-			FRotator(0, -90, 0)
+			FRotator(0.f, -90.f, 0.f)
 		);
 
 		AttachPoint->SetRelativeLocation(
-			FVector(0, 30, 40)
+			FVector(0.f, 30.f, 40.f)
 		);
 	}
 
@@ -157,6 +158,15 @@ void UItemInterationComponent::PickupInteractable()
 			HitActor->GetClass()->ImplementsInterface(
 				UItemInteractionInterface::StaticClass()))
 		{
+			if (AInteractableItem_Master* HitInteractable =
+				Cast<AInteractableItem_Master>(HitActor))
+			{
+				if (!HitInteractable->BCanPickup)
+				{
+					return;
+				}
+			}
+
 			IItemInteractionInterface::Execute_PickUpItem(
 				HitActor,
 				Owner

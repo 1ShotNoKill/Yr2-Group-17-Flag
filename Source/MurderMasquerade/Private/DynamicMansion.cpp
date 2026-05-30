@@ -16,7 +16,7 @@ ADynamicMansion::ADynamicMansion()
 	FrontDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FrontDoor"));
 	FrontDoor->SetupAttachment(RootComponent);
 
-	FrontDoor->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Assets/DynamicMansion/FrontHallway.FrontHallway")));
+	//FrontDoor->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Assets/DynamicMansion/MainRoom.MainRoom")));
 }
 
 // Called when the game starts or when spawned
@@ -30,7 +30,7 @@ void ADynamicMansion::BeginPlay()
 	TArray<FAssetData> Assets = FindAssets(FName("/Game/Assets/DynamicMansion/Blueprints/Hallway"));
 	for (auto Asset : Assets)
 	{
-		
+
 #if UE_BUILD_SHIPPING
 		UClass* Loadedclass = Cast<UClass>(Asset.GetAsset());
 		TSoftClassPtr<AMasterHallwaySegment>Softclass(Loadedclass);
@@ -121,78 +121,90 @@ void ADynamicMansion::BeginPlay()
 
 	int index;
 
-
-	for (int i = 0; i < HallLength; i++)
-	{
-		//Generates Spacer before Hallway Door
-		for (int H = 0; H < HallspacerStart; H++)
+	FVector IntOffset = FVector(0, 0, 0);
+	float Multiplier = -1;
+	//for (int O = 0; O < 2; O++)
+	//{
+		for (int i = 0; i < HallLength; i++)
 		{
-			UChildActorComponent* HallwaySpacer = NewObject<UChildActorComponent>(this);
-			HallwaySpacer->RegisterComponent();
-
-			index = FMath::RandRange(0, SpacerPrefabs.Num() - 1);
-			HallwaySpacer->SetChildActorClass(SpacerPrefabs[index].LoadSynchronous());
-
-			HallwaySpacer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
-			HallwaySpacer->SetRelativeLocation(GetLastSegmentPosition(SpacerOffset)); //Set position offset by SpacerOffset Variable
-			HallwaySegments.Add(HallwaySpacer); //Add to Segment Array
-		}
-
-		//Create Hallway Doorway#
-		UChildActorComponent* Hallway = NewObject<UChildActorComponent>(this);
-		Hallway->RegisterComponent();
-
-		index = FMath::RandRange(0, HallwayPrefabs.Num() - 1);
-		Hallway->SetChildActorClass(HallwayPrefabs[index].LoadSynchronous());
-
-		Hallway->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
-		Hallway->SetRelativeLocation(GetLastSegmentPosition(HallwayOffset)); //Set position offset by HallwayOffset Variable
-		HallwaySegments.Add(Hallway); //Add to Segment Array
-		//Generate Rooms
-		for (int R = 0; R < 2; R++)
-		{
-			UChildActorComponent* Sideroom = NewObject<UChildActorComponent>(this);
-			Sideroom->RegisterComponent();
-
-			index = FMath::RandRange(0, RoomPrefabs.Num() - 1);
-			Sideroom->SetChildActorClass(RoomPrefabs[index].LoadSynchronous());
-
-
-			Sideroom->SetRelativeLocation(GetLastSegmentPosition(0));
-			Sideroom->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-
-			if (R == 1)
+			//Generates Spacer before Hallway Door
+			for (int H = 0; H < HallspacerStart; H++)
 			{
-				Sideroom->SetRelativeScale3D(FVector(1, -1, 1));
+				UChildActorComponent* HallwaySpacer = NewObject<UChildActorComponent>(this);
+				HallwaySpacer->RegisterComponent();
+
+				index = FMath::RandRange(0, SpacerPrefabs.Num() - 1);
+				HallwaySpacer->SetChildActorClass(SpacerPrefabs[index].LoadSynchronous());
+
+				if (i == 0) IntOffset = FVector(InitialOffset*Multiplier, 0, 0);
+				else IntOffset = FVector(0, 0, 0);
+
+				FVector Position = GetLastSegmentPosition(SpacerOffset) + IntOffset;
+
+				HallwaySpacer->SetRelativeLocation(Position); //Set position offset by SpacerOffset Variable
+				HallwaySpacer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
+				HallwaySegments.Add(HallwaySpacer); //Add to Segment Array
 			}
 
-			Rooms.Add(Sideroom);
+			//Create Hallway Doorway#
+			UChildActorComponent* Hallway = NewObject<UChildActorComponent>(this);
+			Hallway->RegisterComponent();
+
+			index = FMath::RandRange(0, HallwayPrefabs.Num() - 1);
+			Hallway->SetChildActorClass(HallwayPrefabs[index].LoadSynchronous());
+
+			if (i == 0) IntOffset = FVector(-InitialOffset, 0, 0);
+			else IntOffset = FVector(0, 0, 0);
+
+			FVector Position = GetLastSegmentPosition(HallwayOffset) + IntOffset;
+			Hallway->SetRelativeLocation(Position); //Set position offset by HallwayOffset Variable
+			Hallway->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
+			HallwaySegments.Add(Hallway); //Add to Segment Array
+			//Generate Rooms
+			for (int R = 0; R < 2; R++)
+			{
+				UChildActorComponent* Sideroom = NewObject<UChildActorComponent>(this);
+				Sideroom->RegisterComponent();
+
+				index = FMath::RandRange(0, RoomPrefabs.Num() - 1);
+				Sideroom->SetChildActorClass(RoomPrefabs[index].LoadSynchronous());
+
+
+				Sideroom->SetRelativeLocation(GetLastSegmentPosition(0));
+				Sideroom->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+
+				if (R == 1)
+				{
+					Sideroom->SetRelativeScale3D(FVector(1, -1, 1));
+				}
+
+				Rooms.Add(Sideroom);
+			}
+
+			//Generate Spacer After Hallway Door
+			for (int H = 0; H < HallspacerEnd; H++)
+			{
+				UChildActorComponent* HallwaySpacer = NewObject<UChildActorComponent>(this);
+				HallwaySpacer->RegisterComponent();
+
+				index = FMath::RandRange(0, SpacerPrefabs.Num() - 1);
+				HallwaySpacer->SetChildActorClass(SpacerPrefabs[index].LoadSynchronous());
+
+				HallwaySpacer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
+				HallwaySpacer->SetRelativeLocation(GetLastSegmentPosition(SpacerOffset)); //Set position offset by SpacerOffset Variable
+				HallwaySegments.Add(HallwaySpacer); //Add to Segment Array
+			}
 		}
-
-		//Generate Spacer After Hallway Door
-		for (int H = 0; H < HallspacerEnd; H++)
-		{
-			UChildActorComponent* HallwaySpacer = NewObject<UChildActorComponent>(this);
-			HallwaySpacer->RegisterComponent();
-
-			index = FMath::RandRange(0, SpacerPrefabs.Num() - 1);
-			HallwaySpacer->SetChildActorClass(SpacerPrefabs[index].LoadSynchronous());
-
-			HallwaySpacer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); //Attach to rootcomponent
-			HallwaySpacer->SetRelativeLocation(GetLastSegmentPosition(SpacerOffset)); //Set position offset by SpacerOffset Variable
-			HallwaySegments.Add(HallwaySpacer); //Add to Segment Array
-		}
+		//Create Hallway Endcap
+		UChildActorComponent* EndCap = NewObject<UChildActorComponent>(this);
+		EndCap->RegisterComponent();
+		index = FMath::RandRange(0, EndCapPrefabs.Num() - 1);
+		EndCap->SetChildActorClass(EndCapPrefabs[index].LoadSynchronous());
+		EndCap->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		EndCap->SetRelativeLocation(GetLastSegmentPosition(SpacerOffset));
+		HallwaySegments.Add(EndCap);
 	}
-	//Create Hallway Endcap
-	UChildActorComponent* EndCap = NewObject<UChildActorComponent>(this);
-	EndCap->RegisterComponent();
-	index = FMath::RandRange(0, EndCapPrefabs.Num() - 1);
-	EndCap->SetChildActorClass(EndCapPrefabs[index].LoadSynchronous());
-	EndCap->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	EndCap->SetRelativeLocation(GetLastSegmentPosition(SpacerOffset));
-	HallwaySegments.Add(EndCap);
-}
-
+//}
 
 
 FVector ADynamicMansion::GetLastSegmentPosition(float Offset)
