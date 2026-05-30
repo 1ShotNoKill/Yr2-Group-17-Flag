@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include <Camera/CameraComponent.h>
-#include <GameFramework/SpringArmComponent.h>
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 #include "InputAction.h"
 #include "InputActionValue.h"
@@ -24,8 +24,9 @@ UCLASS()
 class MURDERMASQUERADE_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-/*Defaults*/
+
 public:
+
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
@@ -35,8 +36,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Damage System
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser
+	) override;
 
-//Custom Variables
 public:
 
 	FInteractDelegate InteractDelegate;
@@ -45,14 +52,20 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* PlayerCamera;
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
 
+	// Health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	float MaxHealth = 100.0f;
 
-	
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	float CurrentHealth;
 
 protected:
+
+	virtual void BeginPlay() override;
 
 private:
 
@@ -61,26 +74,30 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* PlayerMappingContext;
+
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	TMap<FName, const UInputAction*> InputActions;
 
-
-//Custom Functions
 public:
+
 	FVector GetCameraLocation();
 	FVector GetCameraForwardVector();
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 private:
+
 	void CreateCamera();
+
 	void Look(const FInputActionValue& Value);
+
 	void Move(const FInputActionValue& Value);
 
-	
-	
 	void Interact();
+
 	void DropItem();
+
 	void PrimaryFire();
+
 	void PauseGame();
+
+	void Die();
 };

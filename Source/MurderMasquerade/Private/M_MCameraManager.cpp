@@ -1,0 +1,9 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+#include "M_MCameraManager.h"
+
+AM_MCameraManager::AM_MCameraManager()
+{
+	ViewPitchMin = -70.0f;
+	ViewPitchMax = 80.0f;
+}
