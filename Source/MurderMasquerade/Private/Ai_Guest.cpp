@@ -8,6 +8,11 @@ AAi_Guest::AAi_Guest()
 	CreateMaskComponent();
 }
 
+void AAi_Guest::BeginPlay()
+{
+	
+}
+
 void AAi_Guest::SetMask(UStaticMesh* MaskMesh)
 {
 	Mask->SetStaticMesh(MaskMesh);
@@ -28,3 +33,5 @@ void AAi_Guest::CreateMaskComponent()
 	}
 
 }
+
+

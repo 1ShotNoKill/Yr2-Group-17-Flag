@@ -6,6 +6,10 @@
 #include "MainPlayerController.h"
 #include "MurderGameMode.generated.h"
 
+//DECLARE_DELEGATE(FTargetStatusUpdate);
+//DECLARE_MULTICAST_DELEGATE(FNonTargetStatusUpdate);
+
+
 UCLASS()
 class MURDERMASQUERADE_API AMurderGameMode : public AGameModeBase
 {
@@ -24,7 +28,7 @@ public:
 
 	void StartEscapeTimer();
 
-	// Existing variables
+	// Existing variables	
 	UUserWidget* PlayerWidget;
 
 	int TimeRemaining = 10;
@@ -48,6 +52,8 @@ public:
 	void EndGame();
 
 	void UpdateMaskDesc(FString Mask);
+	void UpdateObjective(bool IsTargetDead);
+	void UpdateSecondaryObjective(bool Escaped);
 
 	UFUNCTION()
 	void OnTargetDeath();
@@ -70,7 +76,7 @@ protected:
 
 	// Escape system variables
 	UPROPERTY(EditAnywhere, Category = "Escape")
-	float EscapeTime = 60.0f;
+	float EscapeTime = 30.f;
 
 	float EscapeTimeRemaining;
 

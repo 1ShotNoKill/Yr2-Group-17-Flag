@@ -27,11 +27,20 @@ void AMurderGameMode::PlayerEscaped()
 
 	bPlayerEscaped = true;
 
-	GetWorldTimerManager().ClearTimer(EscapeTimerHandle);
+	//GetWorldTimerManager().ClearTimer(EscapeTimerHandle);
 
 	UE_LOG(LogTemp, Warning, TEXT("PLAYER ESCAPED"));
+	UpdateSecondaryObjective(bPlayerEscaped);
 
-	Wingame();
+	if (bIsTargetDead)
+	{
+		Wingame();
+	}
+	else
+	{
+		LoseGame();
+	}
+	EscapeTimeRemaining = 5;
 }
 
 void AMurderGameMode::StartPlay()
@@ -156,10 +165,9 @@ void AMurderGameMode::EscapeTimerTick()
 	);
 
 	// Update widget timer if your widget supports it
-	if (PlayerWidget)
+	if (PlayerWidget && EscapeTimeRemaining >= 0)
 	{
-		UFunction* Func =
-			PlayerWidget->FindFunction(TEXT("UpdateText"));
+		UFunction* Func = PlayerWidget->FindFunction(TEXT("UpdateText"));
 
 		if (Func)
 		{
@@ -179,17 +187,23 @@ void AMurderGameMode::EscapeTimerTick()
 	{
 		OnEscapeTimerExpired();
 	}
+	if (EscapeTimeRemaining <= -2)
+	{
+		EndGame();
+	}
 }
 
 void AMurderGameMode::OnEscapeTimerExpired()
 {
-	GetWorldTimerManager().ClearTimer(EscapeTimerHandle);
+	/*GetWorldTimerManager().ClearTimer(EscapeTimerHandle);*/
 
 	if (!bPlayerEscaped)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PLAYER FAILED TO ESCAPE"));
 
 		LoseGame();
+
+		UpdateSecondaryObjective(false);
 	}
 }
 
@@ -200,8 +214,7 @@ void AMurderGameMode::UpdateTimer()
 
 void AMurderGameMode::EndGame()
 {
-	FString FullMapName =
-		UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	FString FullMapName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
 
 	UGameplayStatics::OpenLevel(GetWorld(), *FullMapName);
 }
@@ -236,6 +249,44 @@ void AMurderGameMode::UpdateMaskDesc(FString Mask)
 	}
 }
 
+void AMurderGameMode::UpdateObjective(bool IsTargetDead)
+{
+	if (PlayerWidget)
+	{
+		UFunction* UpdateObjective = PlayerWidget->FindFunction(TEXT("OnMainObjectiveX"));
+		if (UpdateObjective)
+		{
+			struct FUpdateObjective
+			{
+				bool TargetDead;
+			};
+		
+			FUpdateObjective Objective;
+			Objective.TargetDead = IsTargetDead;
+			PlayerWidget->ProcessEvent(UpdateObjective, &Objective);
+		}
+	}
+}
+
+void AMurderGameMode::UpdateSecondaryObjective(bool Escaped)
+{
+	if (PlayerWidget)
+	{
+		UFunction* UpdateSecondaryObjective = PlayerWidget->FindFunction(TEXT("OnEscapeX"));
+		if (UpdateSecondaryObjective)
+		{
+			struct FUpdateSecondObjective
+			{
+				bool Escaped;
+			};
+
+			FUpdateSecondObjective SecondObjective;
+			SecondObjective.Escaped = Escaped;
+			PlayerWidget->ProcessEvent(UpdateSecondaryObjective, &SecondObjective);
+		}
+	}
+}
+
 void AMurderGameMode::OnTargetDeath()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Target Has Died"));
@@ -248,6 +299,8 @@ void AMurderGameMode::OnTargetDeath()
 
 	// Start escape phase
 	ChangePhase(2);
+
+	UpdateObjective(bIsTargetDead);
 }
 
 void AMurderGameMode::OnNonTargetDeath()
@@ -255,6 +308,12 @@ void AMurderGameMode::OnNonTargetDeath()
 	UE_LOG(LogTemp, Warning, TEXT("-500 points"));
 
 	PlayerPoints -= 500;
+
+	if (bIsTargetDead == false)
+	{
+		UpdateObjective(false);
+	}
+	ChangePhase(2);
 }
 
 void AMurderGameMode::OnGuardDeath()

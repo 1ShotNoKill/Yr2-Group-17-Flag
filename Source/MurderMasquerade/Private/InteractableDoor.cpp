@@ -3,9 +3,6 @@
 
 #include "InteractableDoor.h"
 
-
-
-
 AInteractableDoor::AInteractableDoor()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,6 +39,7 @@ void AInteractableDoor::BeginPlay()
 
 void AInteractableDoor::PickUpItem_Implementation(APlayerCharacter* Interactor)
 {
+	if (!Interactor) return;
 	BDoorOpen = true;
 	
 	//ToggleDoor();

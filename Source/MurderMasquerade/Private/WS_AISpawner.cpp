@@ -63,7 +63,7 @@ void UWS_AISpawner::SpawnGuests()
 			FName TagName = (*MaskName.ToString()); //Convert FText to FName
 			Guest->Tags.Add(TagName); //Adds mask name to guest npc
 		}		
-		if (RandomMask == TargetMask)
+		if (RandomMask == TargetMask) //Target Specifics
 		{
 			Guest->Tags.Add("Target"); //If guest wears target mark then mark then as the target.
 			Guest->bIsTarget = true;
@@ -73,8 +73,16 @@ void UWS_AISpawner::SpawnGuests()
 			if(GM) Guest->OnDeath.AddDynamic(GM, &AMurderGameMode::OnTargetDeath);
 			UE_LOG(LogTemp, Warning, TEXT("Bound to Target"));
 		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Binding to non targets"))
+			AMurderGameMode* GM = Cast<AMurderGameMode>(GetWorld()->GetAuthGameMode());
+			if (GM) Guest->OnDeath.AddDynamic(GM, &AMurderGameMode::OnNonTargetDeath);
+		}
 		Guest->CurrentMaskType = RandomMask;
 		
+		
+
 
 		LocalAllMarkers.RemoveAt(RandomIndex);
 	}

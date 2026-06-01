@@ -137,10 +137,10 @@ void AMaster_Ai::SetDeadState()
 	CharMesh->SetRelativeRotation(Rotation);
 
 	GetCharacterMovement()->DisableMovement();
-	AIController->StopMovement();
+	if(AIController) AIController->StopMovement();
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
-	if(bIsTarget == true) OnDeath.Broadcast();
+	OnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("NPC Died"));
 }
