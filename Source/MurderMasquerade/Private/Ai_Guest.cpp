@@ -8,11 +8,6 @@ AAi_Guest::AAi_Guest()
 	CreateMaskComponent();
 }
 
-void AAi_Guest::BeginPlay()
-{
-	
-}
-
 void AAi_Guest::SetMask(UStaticMesh* MaskMesh)
 {
 	Mask->SetStaticMesh(MaskMesh);
@@ -26,7 +21,7 @@ void AAi_Guest::CreateMaskComponent()
 	{
 		Mask->SetupAttachment(GetMesh(), FName("head"));
 		Mask->SetStaticMesh(nullptr);
-		Mask->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+		Mask->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 		FRotator Rot = Mask->GetRelativeRotation();
 		FRotator NewRot = FRotator(Rot.Roll, 90, -90);
 		Mask->SetRelativeRotation(NewRot);

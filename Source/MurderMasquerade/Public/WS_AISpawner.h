@@ -17,7 +17,10 @@ enum class EMask : uint8
 	None UMETA(DisplayName = "None"),
 	Bird UMETA(DisplayName = "Bird Mask"),
 	Bear UMETA(DisplayName = "Bear Mask"),
-	Rabbit UMETA(DisplayName = "Rabbit Mask")
+	Rabbit UMETA(DisplayName = "Rabbit Mask"),
+	Deer UMETA(DisplayName = "Deer Mask"),
+	Fox UMETA(DisplayName = "Fox Mask"),
+	Wolf UMETA(DisplayName = "Wolf Mask")
 };
 
 

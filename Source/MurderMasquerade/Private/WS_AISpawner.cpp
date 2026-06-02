@@ -130,6 +130,9 @@ void UWS_AISpawner::OnWorldBeginPlay(UWorld& World)
 	MaskMap.Add(EMask::Bird, "/Game/Masks/BirdMask.BirdMask");
 	MaskMap.Add(EMask::Bear, "/Game/Masks/BearMask.BearMask");
 	MaskMap.Add(EMask::Rabbit, "/Game/Masks/RabbitMask.RabbitMask");
+	MaskMap.Add(EMask::Deer, "/Game/Masks/DeerMask.DeerMask");
+	MaskMap.Add(EMask::Fox, "/Game/Masks/FoxMask.FoxMask");
+	MaskMap.Add(EMask::Wolf, "/Game/Masks/WolfMask.WolfMask");
 
 
 	FTimerHandle SpawnTimer;

@@ -34,6 +34,9 @@ AMaster_Ai::AMaster_Ai()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	Capsule->SetCapsuleRadius(25.f);
+
 }
 
 // Called when the game starts or when spawned

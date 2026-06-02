@@ -16,11 +16,9 @@ class MURDERMASQUERADE_API AAi_Guest : public AMaster_Ai
 	AAi_Guest();
 
 public:
-	virtual void BeginPlay() override;
 	void SetMask(UStaticMesh* Mesh);
 	EMask CurrentMaskType;
 	bool bIsTarget;
-	AMurderGameMode* Gamemode;
 
 private:
 	UPROPERTY(EditAnywhere)
