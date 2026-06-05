@@ -60,7 +60,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
-	virtual void OnConstruction(const FTransform& Transform) override;
 	FVector GetLastSegmentPosition(float Offset);
 	void GetDefaults();
 	TArray<FAssetData> FindAssets(FName Directory);

@@ -24,11 +24,13 @@ void AInteractableItem_Master::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-
+	
 
 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	Mesh->SetSimulatePhysics(true);
+	if (bStartSimulatePhysics == true)
+	{
+		Mesh->SetSimulatePhysics(true);
+	}
 }
 
 void AInteractableItem_Master::OnConstruction(const FTransform& Transform)

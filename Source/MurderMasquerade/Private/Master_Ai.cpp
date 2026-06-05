@@ -53,6 +53,7 @@ void AMaster_Ai::BeginPlay()
 
 	AIController->ReceiveMoveCompleted.AddDynamic(this, &AMaster_Ai::RotateCharacter);
 
+	MoveToRandomMarker();
 
 	FTimerHandle TimerHandle;
 	if (!TimerHandle.IsValid())

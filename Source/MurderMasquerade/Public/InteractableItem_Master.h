@@ -29,6 +29,8 @@ public:
 public:
 	float UseRange = 250;
 	bool BCanPickup = true;
+	UPROPERTY(EditAnywhere)
+	bool bStartSimulatePhysics = true;
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;

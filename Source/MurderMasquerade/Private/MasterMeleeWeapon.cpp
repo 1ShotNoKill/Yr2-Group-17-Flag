@@ -6,5 +6,5 @@
 AMasterMeleeWeapon::AMasterMeleeWeapon()
 {
 	DefaultMeshPath = "/Game/Assets/Weapons/Melee/Hatchet.Hatchet";
-	UseRange = 150;
+	UseRange = 250;
 }
