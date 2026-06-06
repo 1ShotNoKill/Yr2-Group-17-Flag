@@ -28,6 +28,8 @@ public:
 
 	void StartEscapeTimer();
 
+	APlayerCharacter* PlayerRef;
+
 	// Existing variables	
 	UUserWidget* PlayerWidget;
 
@@ -63,6 +65,12 @@ public:
 
 	UFUNCTION()
 	void OnGuardDeath();
+	UFUNCTION(BlueprintCallable)
+	void ChangePlayerSensitivity(float NewSens);
+	UFUNCTION(BlueprintCallable)
+	void InvertPlayerControls(bool Inverted);
+
+
 
 protected:
 

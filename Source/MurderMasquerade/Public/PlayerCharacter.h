@@ -63,6 +63,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	float CurrentHealth;
 
+	float Sensmultiplier = 1;
+	float Sensitivity = 1;
+
+
 protected:
 
 	virtual void BeginPlay() override;

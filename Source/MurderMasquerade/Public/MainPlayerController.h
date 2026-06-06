@@ -18,6 +18,8 @@ public:
 	AMainPlayerController();
 	virtual void BeginPlay() override;
 
+
+
 	UPROPERTY()
 	TSubclassOf<UUserWidget> PlayerHudClass;
 
@@ -25,3 +27,4 @@ public:
 	UUserWidget* PlayerHudReference;
 	
 };
+

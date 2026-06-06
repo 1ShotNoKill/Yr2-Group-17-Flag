@@ -84,10 +84,10 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D Vector = Value.Get<FVector2D>();
 
-	float VertScale = 1.0f;
+	float VertScale = 1.0f * Sensitivity * Sensmultiplier;
 	AddControllerPitchInput(Vector.Y * VertScale);
 
-	float HoriScale = 1.0f;
+	float HoriScale = 1.0f * Sensitivity;
 	AddControllerYawInput(Vector.X * HoriScale);
 }
 

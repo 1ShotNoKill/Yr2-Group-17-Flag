@@ -61,6 +61,11 @@ void AMurderGameMode::StartPlay()
 
 	if (Player)
 	{
+		PlayerRef = Cast<APlayerCharacter>(Player);
+	}
+
+	if (Player)
+	{
 		AMainPlayerController* PlayerController =
 			Cast<AMainPlayerController>(Player->GetController());
 
@@ -321,4 +326,24 @@ void AMurderGameMode::OnGuardDeath()
 	UE_LOG(LogTemp, Warning, TEXT("+200 points"));
 
 	PlayerPoints += 200;
+}
+
+void AMurderGameMode::ChangePlayerSensitivity(float NewSens)
+{
+	if (PlayerRef)
+	{
+		PlayerRef->Sensitivity = NewSens;
+	}
+}
+
+void AMurderGameMode::InvertPlayerControls(bool Inverted)
+{
+	if (PlayerRef)
+	{
+		if (Inverted == true)
+		{
+			PlayerRef->Sensmultiplier = -1;
+		}
+		else PlayerRef->Sensmultiplier = 1;
+	}
 }
